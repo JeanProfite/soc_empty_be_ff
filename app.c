@@ -123,11 +123,13 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // -------------------------------
     // This event indicates that a new connection was opened.
     case sl_bt_evt_connection_opened_id:
+      app_log_info("%s Connection OPENED\n", __FUNCTION__);
       break;
 
     // -------------------------------
     // This event indicates that a connection was closed.
     case sl_bt_evt_connection_closed_id:
+      app_log_info("%s Connection CLOSED\n", __FUNCTION__);
       // Restart advertising after client has disconnected.
       sc = sl_bt_advertiser_start(
         advertising_set_handle,
