@@ -32,6 +32,7 @@
 #include "sl_bluetooth.h"
 #include "gatt_db.h"
 #include "app.h"
+#include "sl_sensor_rht.h"
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
@@ -124,12 +125,17 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event indicates that a new connection was opened.
     case sl_bt_evt_connection_opened_id:
       app_log_info("%s Connection OPENED\n", __FUNCTION__);
+      sc = sl_sensor_rht_init();
+      app_assert_status(sc);
+      app_log_info("%s Initialisation Si70xx OK\n", __FUNCTION__);
       break;
 
     // -------------------------------
     // This event indicates that a connection was closed.
     case sl_bt_evt_connection_closed_id:
       app_log_info("%s Connection CLOSED\n", __FUNCTION__);
+      sl_sensor_rht_deinit();
+      app_log_info("%s Si70xx desinitialized\n", __FUNCTION__);
       // Restart advertising after client has disconnected.
       sc = sl_bt_advertiser_start(
         advertising_set_handle,
@@ -138,6 +144,9 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       app_assert_status(sc);
       break;
 
+    case sl_bt_evt_gatt_server_user_read_request_id:
+          app_log_info("%s Read from client\n", __FUNCTION__);
+          break;
     ///////////////////////////////////////////////////////////////////////////
     // Add additional event handlers here as your application requires!      //
     ///////////////////////////////////////////////////////////////////////////
