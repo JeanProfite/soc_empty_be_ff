@@ -33,6 +33,7 @@
 #include "gatt_db.h"
 #include "app.h"
 #include "sl_sensor_rht.h"
+#include "temperature.h"
 
 uint32_t rh=0;
 int32_t t=0;
@@ -154,8 +155,8 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       // This event indicates that a connection was closed.
      case sl_bt_evt_gatt_server_user_read_request_id:
        app_log_info("%s Read from client\n", __FUNCTION__);
-       sc = sl_sensor_rht_get(&rh, &t);
-       app_log_info("%s\n Temperature: %d [deg]\n Humidite: %d [RH%%]\n", __FUNCTION__,t,rh);
+       t=temp_read_BLE();
+       app_log_info("%s\n Temperature: %d [deg]\n", __FUNCTION__,t);
        //sl_bt_gatt_server_send_user_read_response();
        break;
     ///////////////////////////////////////////////////////////////////////////
