@@ -34,6 +34,9 @@
 #include "app.h"
 #include "sl_sensor_rht.h"
 
+uint32_t rh=0;
+int32_t t=0;
+
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
 
@@ -125,6 +128,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event indicates that a new connection was opened.
     case sl_bt_evt_connection_opened_id:
       app_log_info("%s Connection OPENED\n", __FUNCTION__);
+      //___Sensor initialisation__
       sc = sl_sensor_rht_init();
       app_assert_status(sc);
       app_log_info("%s Initialisation Si70xx OK\n", __FUNCTION__);
@@ -134,8 +138,10 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event indicates that a connection was closed.
     case sl_bt_evt_connection_closed_id:
       app_log_info("%s Connection CLOSED\n", __FUNCTION__);
+      //__Sensor deinitialisation__
       sl_sensor_rht_deinit();
       app_log_info("%s Si70xx desinitialized\n", __FUNCTION__);
+
       // Restart advertising after client has disconnected.
       sc = sl_bt_advertiser_start(
         advertising_set_handle,
@@ -144,9 +150,14 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       app_assert_status(sc);
       break;
 
-    case sl_bt_evt_gatt_server_user_read_request_id:
-          app_log_info("%s Read from client\n", __FUNCTION__);
-          break;
+      // -------------------------------
+      // This event indicates that a connection was closed.
+     case sl_bt_evt_gatt_server_user_read_request_id:
+       app_log_info("%s Read from client\n", __FUNCTION__);
+       sc = sl_sensor_rht_get(&rh, &t);
+       app_log_info("%s\n Temperature: %d [deg]\n Humidite: %d [RH%%]\n", __FUNCTION__,t,rh);
+       //sl_bt_gatt_server_send_user_read_response();
+       break;
     ///////////////////////////////////////////////////////////////////////////
     // Add additional event handlers here as your application requires!      //
     ///////////////////////////////////////////////////////////////////////////
