@@ -36,7 +36,7 @@
 #include "temperature.h"
 
 uint32_t rh=0;
-int32_t t=0;
+int32_t t=0x8000;
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
@@ -155,10 +155,13 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       // This event indicates that a connection was closed.
      case sl_bt_evt_gatt_server_user_read_request_id:
        app_log_info("%s Read from client\n", __FUNCTION__);
-       t=temp_read_BLE();
-       app_log_info("%s\n Temperature: %d [deg]\n", __FUNCTION__,t);
-       //sl_bt_gatt_server_send_user_read_response();
+       if (evt->data.evt_gatt_server_user_read_request.characteristic == gattdb_temperature) {
+           temp_read_BLE(&rh,&t);
+           app_log_info("Temperature format BLE: %d \n",t);
+           sl_bt_gatt_server_send_user_read_response(evt->data.evt_gatt_server_user_read_request.connection,gattdb_temperature,0,sizeof(t),(uint8_t*)&t,NULL);
+       }
        break;
+
     ///////////////////////////////////////////////////////////////////////////
     // Add additional event handlers here as your application requires!      //
     ///////////////////////////////////////////////////////////////////////////
