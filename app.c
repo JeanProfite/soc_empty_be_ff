@@ -34,9 +34,12 @@
 #include "app.h"
 #include "sl_sensor_rht.h"
 #include "temperature.h"
+#include "sl_simple_timer.h"
 
 uint32_t rh=0;
 int32_t t=0x8000;
+int step=0;
+sl_simple_timer_t timer;
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
@@ -64,6 +67,11 @@ SL_WEAK void app_process_action(void)
   // This is called infinitely.                                              //
   // Do not call blocking functions from here!                               //
   /////////////////////////////////////////////////////////////////////////////
+}
+
+void callback(){
+  app_log_info("Timer step %d\n",step);
+  step++;
 }
 
 /**************************************************************************//**
@@ -152,13 +160,38 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       break;
 
       // -------------------------------
-      // This event indicates that a connection was closed.
+      // This event indicates that a client request a read.
      case sl_bt_evt_gatt_server_user_read_request_id:
        app_log_info("%s Read from client\n", __FUNCTION__);
        if (evt->data.evt_gatt_server_user_read_request.characteristic == gattdb_temperature) {
            temp_read_BLE(&rh,&t);
            app_log_info("Temperature format BLE: %d \n",t);
            sl_bt_gatt_server_send_user_read_response(evt->data.evt_gatt_server_user_read_request.connection,gattdb_temperature,0,sizeof(t),(uint8_t*)&t,NULL);
+       }
+       break;
+
+       // -------------------------------
+       // This event indicates that a client changed a characteristic status.
+     case sl_bt_evt_gatt_server_characteristic_status_id:
+       if (evt->data.evt_gatt_server_characteristic_status.characteristic == gattdb_temperature) {
+           app_log_info("%s Temp Notify toggle\n", __FUNCTION__);
+           app_log_info("Status flag: 0x%X\n",evt->data.evt_gatt_server_characteristic_status.status_flags);
+           app_log_info("Client config flag: 0x%X\n",evt->data.evt_gatt_server_characteristic_status.client_config_flags);
+           if(
+               (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x01)
+               ||
+               (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x03 )
+               ){ //si notif ou indicate actif
+               app_log_info("Timer on\n");
+               sl_simple_timer_start(&timer, 1000, callback, NULL, 1);
+           }
+           else if(
+               (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x00)
+               ||
+               (evt->data.evt_gatt_server_characteristic_status.client_config_flags == 0x02)){
+               app_log_info("Timer off\n");
+               sl_simple_timer_stop(&timer);
+           }
        }
        break;
 
