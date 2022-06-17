@@ -216,6 +216,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
            if(ledState != ledWrite){
                sl_simple_led_toggle(sl_led_led0.context);
+               sl_simple_led_toggle(sl_led_led1.context);
                ledState=!ledState;
            }
 
