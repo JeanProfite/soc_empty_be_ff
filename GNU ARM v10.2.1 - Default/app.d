@@ -99,7 +99,11 @@ app.o: ../app.c \
  ../app.h \
  c\:\users\battl\simplicitystudio\sdks\gecko_sdk\app\bluetooth\common\sensor_rht\sl_sensor_rht.h \
  ../temperature.h \
- c\:\users\battl\simplicitystudio\sdks\gecko_sdk\app\bluetooth\common\simple_timer\sl_simple_timer.h
+ c\:\users\battl\simplicitystudio\sdks\gecko_sdk\app\bluetooth\common\simple_timer\sl_simple_timer.h \
+ C\:\Users\Battl\SimplicityStudio\v5_workspace\soc_empty_be_ff\autogen/sl_simple_led_instances.h \
+ c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_simple_led.h \
+ c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_led.h \
+ c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h
 c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\common\toolchain\inc\sl_gcc_preinclude.h:
 c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_common.h:
 c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\device\siliconlabs\efr32mg12p\include\em_device.h:
@@ -201,3 +205,7 @@ c\:\users\battl\simplicitystudio\sdks\gecko_sdk\protocol\bluetooth\inc\sli_bt_ga
 c\:\users\battl\simplicitystudio\sdks\gecko_sdk\app\bluetooth\common\sensor_rht\sl_sensor_rht.h:
 ../temperature.h:
 c\:\users\battl\simplicitystudio\sdks\gecko_sdk\app\bluetooth\common\simple_timer\sl_simple_timer.h:
+C\:\Users\Battl\SimplicityStudio\v5_workspace\soc_empty_be_ff\autogen/sl_simple_led_instances.h:
+c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_simple_led.h:
+c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\driver\leddrv\inc\sl_led.h:
+c\:\users\battl\simplicitystudio\sdks\gecko_sdk\platform\emlib\inc\em_gpio.h:
